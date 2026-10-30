@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Regra de Taylor – Brasil</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Selic efetiva contra a Selic implícita pela regra de Taylor e juro real ex-ante contra o juro neutro, com dados do Banco Central.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+<style>
+/* Layout: coluna única editorial, leitura do mês no topo, dois gráficos de série e notas metodológicas.
+   Mesma identidade do dashboard ISMI: tinta, vermelho = acima da regra (aperto), azul = abaixo. */
+:root{
+  --bg:#FFFFFF; --ink:#111214; --text:#3A3E44; --muted:#6E7278; --hair:#E4E6E8; --grid:#E9EBED;
+  --aperto:#D8382C; --folga:#1D5FA0; --aperto-t:rgba(216,56,44,.11); --folga-t:rgba(29,95,160,.11);
+  --regra:#B3741A; --chip:#F4F5F6; --mark:#FFF6E8;
+  --f-display:Newsreader,Georgia,"Times New Roman",serif;
+  --f-body:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#121315; --ink:#F1F2F3; --text:#C9CCD0; --muted:#9298A0; --hair:#2B2E33; --grid:#24272B;
+  --aperto:#F0645A; --folga:#5C9BDB; --aperto-t:rgba(240,100,90,.16); --folga-t:rgba(92,155,219,.16);
+  --regra:#E3A548; --chip:#1D1F23; --mark:#2A2416; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121315; --ink:#F1F2F3; --text:#C9CCD0; --muted:#9298A0; --hair:#2B2E33; --grid:#24272B;
+  --aperto:#F0645A; --folga:#5C9BDB; --aperto-t:rgba(240,100,90,.16); --folga-t:rgba(92,155,219,.16);
+  --regra:#E3A548; --chip:#1D1F23; --mark:#2A2416; color-scheme:dark}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);
+  font-size:15.5px;line-height:1.6;font-variant-numeric:tabular-nums}
+.wrap{max-width:1100px;margin:0 auto;padding-block:28px 80px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1{font-family:var(--f-display);font-weight:700;font-variation-settings:"opsz" 46;
+  font-size:clamp(30px,4.6vw,46px);line-height:1.05;letter-spacing:-.015em;margin:0 0 12px;text-wrap:balance}
+.standfirst{font-size:17px;color:var(--text);max-width:68ch;margin:0}
+.standfirst a{color:inherit;text-decoration:underline;text-decoration-color:var(--muted);text-underline-offset:3px}
+.standfirst a:hover{text-decoration-color:var(--ink)}
+.byline{font-size:12.5px;color:var(--muted);margin:16px 0 0;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.byline a.who{font-size:13px;font-weight:700;color:var(--bg);background:var(--ink);padding:5px 14px;
+  border-radius:999px;text-decoration:none}
+.byline a.who:focus-visible{outline:2px solid var(--aperto);outline-offset:2px}
+
+/* leitura do mês */
+.leitura{margin:30px 0 0;border-top:1px solid var(--ink);padding-top:16px}
+.leitura .ref{font-size:10.5px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin:0 0 12px}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 40px}
+.card{min-width:0;border-top:4px solid var(--aperto);padding-top:12px}
+.card.fo{border-top-color:var(--folga)}
+.card .cl{font-size:12.5px;color:var(--muted);margin:0}
+.card .cv{font-family:var(--f-display);font-weight:700;font-size:clamp(34px,5vw,48px);line-height:1.05;margin:4px 0 2px;color:var(--aperto)}
+.card.fo .cv{color:var(--folga)}
+.card .cd{font-size:13px;color:var(--text);margin:0}
+.legcor{display:flex;gap:18px;flex-wrap:wrap;font-size:12.5px;color:var(--text);margin:16px 0 0}
+.legcor i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:baseline}
+/* controles */
+.controles{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px 32px;
+  margin:28px 0 0;padding:16px 0 0;border-top:1px solid var(--hair)}
+.grupo{display:flex;flex-direction:column;gap:8px;min-width:0}
+.grupo>a{font-size:10.5px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);
+  text-decoration:none;border-bottom:1px dotted var(--muted);width:max-content}
+.seg{display:flex;flex-wrap:wrap;gap:7px}
+.seg button{font:inherit;font-size:12.5px;font-weight:500;padding:6px 13px;cursor:pointer;color:var(--text);
+  background:var(--bg);border:1px solid var(--hair);border-radius:999px;white-space:nowrap}
+.seg button:hover{border-color:var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink);font-weight:600}
+.seg button:focus-visible,.slider input:focus-visible{outline:2px solid var(--aperto);outline-offset:2px}
+.slider{display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--text)}
+.slider input{flex:1;min-width:0;accent-color:var(--ink)}
+.dual{position:relative;height:28px}
+.dual .trk,.dual .fil{position:absolute;top:12px;height:3px;border-radius:2px}
+.dual .trk{left:0;right:0;background:var(--hair)} .dual .fil{background:var(--ink)}
+.dual input[type=range]{position:absolute;inset:0;width:100%;margin:0;background:none;-webkit-appearance:none;appearance:none;pointer-events:none;height:28px}
+.dual input[type=range]::-webkit-slider-runnable-track{background:none}
+.dual input[type=range]::-moz-range-track{background:none}
+.dual input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;pointer-events:auto;width:16px;height:16px;border-radius:50%;background:var(--bg);border:2.5px solid var(--ink);cursor:grab}
+.dual input[type=range]::-moz-range-thumb{pointer-events:auto;width:12px;height:12px;border-radius:50%;background:var(--bg);border:2.5px solid var(--ink);cursor:grab}
+.dual input[type=range]:focus-visible::-webkit-slider-thumb{outline:2px solid var(--aperto);outline-offset:2px}
+.plab{display:flex;justify-content:space-between;font-size:12.5px;font-weight:600;color:var(--ink)}
+.ajuda{font-size:12px;color:var(--muted);margin:0;line-height:1.45;max-width:40ch}
+.slider output{min-width:46px;text-align:right;font-weight:600;color:var(--ink)}
+
+/* gráficos */
+figure{margin:34px 0 0}
+.figtit{font-size:15px;font-weight:700;margin:0 0 4px}
+.figsub{font-size:13px;color:var(--muted);margin:0 0 8px;max-width:80ch}
+.hud{font-size:12.5px;color:var(--muted);min-height:20px;margin:0 0 6px;display:flex;gap:14px;flex-wrap:wrap}
+.hud b{color:var(--ink);font-weight:600}
+.legenda{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--text);margin:8px 0 0}
+.legenda i{display:inline-block;width:18px;height:0;border-top:2.5px solid;vertical-align:middle;margin-right:6px}
+.legenda i.area{height:10px;border:0;width:14px}
+.chart{position:relative}
+svg{display:block;width:100%;height:auto;overflow:visible}
+.eixo{font-size:11px;fill:var(--muted);font-family:var(--f-body)}
+.grade{stroke:var(--grid);stroke-width:1}
+.endlab{font-size:11.5px;font-weight:600;paint-order:stroke;stroke:var(--bg);stroke-width:3.5px}
+.periodo{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0 0}
+
+/* notas */
+.notas{margin-top:60px;border-top:3px solid var(--ink);padding-top:24px}
+.notas h2{font-family:var(--f-display);font-size:24px;font-weight:700;margin:0 0 12px;letter-spacing:-.01em}
+.notas h3{font-size:14px;font-weight:600;margin:20px 0 4px;scroll-margin-top:20px}
+.notas p{margin:0 0 10px;font-size:14px;color:var(--text);max-width:88ch}
+.notas>div+div{margin-top:40px;padding-top:28px;border-top:1px solid var(--hair)}
+.eqrow{margin:14px 0;overflow-x:auto;max-width:88ch;color:var(--ink);font-size:17px}
+.eqrow math{font-family:"STIX Two Math","Cambria Math","Latin Modern Math",serif}
+.refb{font-size:12.5px;color:var(--muted);margin:0 0 6px;padding-left:22px;text-indent:-22px}
+.refb a{color:inherit}
+.disp{color:var(--regra)}
+.fonte{font-size:12px;color:var(--muted);margin-top:36px;padding-top:12px;border-top:1px solid var(--hair)}
+:target{background:var(--mark)}
+
+@media (max-width:520px){.cards{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:420px){.eixo{font-size:10px}.standfirst{font-size:16px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+<h1>Regra de Taylor – Brasil</h1>
+<p class="standfirst">Este painel compara a política monetária efetivamente praticada pelo Banco Central com a indicada por uma regra de Taylor prospectiva, nos moldes de Taylor (1993). As especificações do modelo podem ser alteradas abaixo. A metodologia detalhada está no <a href="https://github.com/davispeckr/Regra-de-Taylor" target="_blank" rel="noopener">repositório do projeto no GitHub</a>.</p>
+<p class="byline"><a class="who" href="https://www.linkedin.com/in/davi-speck-ramos-a26079242" target="_blank" rel="noopener">Davi Speck Ramos</a><span id="atualizado"></span></p>
+
+<section class="leitura" aria-live="polite">
+  <p class="ref" id="refmes">—</p>
+  <div class="cards">
+    <div class="card" id="c1"><p class="cl">Selic menos regra de Taylor</p><p class="cv" id="v1">—</p><p class="cd" id="d1"></p></div>
+    <div class="card" id="c2"><p class="cl">Juro real menos juro neutro</p><p class="cv" id="v2">—</p><p class="cd" id="d2"></p></div>
+  </div>
+  <p class="legcor"><span><i style="background:var(--aperto)"></i>Política mais apertada</span><span><i style="background:var(--folga)"></i>Política mais frouxa</span></p>
+</section>
+
+<div class="controles">
+  <div class="grupo"><a href="#p-neutro">Juro neutro</a>
+    <div class="seg" id="cNeutro"></div>
+    <p class="ajuda" id="hNeutro"></p>
+    <div class="slider"><input type="range" id="rNeutro" min="2" max="9" step="0.25" value="5" aria-label="Juro neutro personalizado"><output id="oNeutro">5,00%</output></div>
+  </div>
+  <div class="grupo"><a href="#p-hiato">Hiato do produto</a><div class="seg" id="cHiato"></div><p class="ajuda" id="hHiato"></p></div>
+  <div class="grupo"><a href="#p-pesos">Peso da inflação</a><div class="seg" id="cApi"></div></div>
+  <div class="grupo"><a href="#p-pesos">Peso do hiato</a><div class="seg" id="cAy"></div></div>
+  <div class="grupo" style="grid-column:1/-1"><a href="#p-regra">Período dos gráficos</a>
+    <div class="periodo2">
+      <div class="dual">
+        <div class="trk"></div><div class="fil" id="pFil"></div>
+        <input type="range" id="pIni" min="0" max="1" step="1" aria-label="Mês inicial">
+        <input type="range" id="pFim" min="0" max="1" step="1" aria-label="Mês final">
+      </div>
+      <div class="plab"><span id="pIniL">—</span><span id="pFimL">—</span></div>
+    </div>
+  </div>
+</div>
+
+<figure>
+  <p class="figtit">Selic meta e Selic pela regra de Taylor</p>
+  <p class="figsub">Área vermelha: Selic acima da regra, política mais apertada do que a regra pede. Área azul: Selic abaixo da regra. <span class="disp" id="disp1"></span></p>
+  <div class="hud" id="hud1"></div>
+  <div class="chart"><svg id="g1" role="img" aria-label="Selic meta e regra de Taylor ao longo do tempo"></svg></div>
+  <div class="legenda"><span><i style="border-color:var(--ink)"></i>Selic meta</span><span><i style="border-color:var(--regra)"></i>Regra de Taylor</span><span><i class="area" style="background:var(--aperto-t)"></i>Acima da regra</span><span><i class="area" style="background:var(--folga-t)"></i>Abaixo da regra</span></div>
+</figure>
+
+<figure>
+  <p class="figtit">Juro real ex-ante e juro neutro</p>
+  <p class="figsub">Selic esperada para os próximos 12 meses no Focus, descontada do IPCA esperado para o mesmo período. A distância até o neutro mede o grau de aperto.</p>
+  <div class="hud" id="hud2"></div>
+  <div class="chart"><svg id="g2" role="img" aria-label="Juro real ex-ante e juro neutro ao longo do tempo"></svg></div>
+  <div class="legenda"><span><i style="border-color:var(--ink)"></i>Juro real ex-ante</span><span><i style="border-color:var(--regra);border-top-style:dashed"></i>Juro neutro escolhido</span><span><i style="border-color:var(--muted);border-top-style:dotted"></i>Neutro implícito no Focus</span></div>
+</figure>
+
+<section class="notas">
+  <div>
+    <h2>Como ler</h2>
+    <p>A regra de Taylor é uma referência normativa: diz qual seria a Selic se o Banco Central reagisse à inflação esperada e ao hiato do produto com pesos fixos. Não é uma previsão da decisão do Copom nem uma recomendação. A distância entre a Selic e a regra mostra se a política está mais apertada ou mais frouxa do que essa referência, dados o juro neutro e o hiato escolhidos.</p>
+    <p>Os dois parâmetros não observáveis, juro neutro e hiato, mudam bastante o resultado. Por isso o painel deixa trocá-los. A leitura do mês no topo usa as opções escolhidas nos controles.</p>
+  </div>
+  <div>
+    <h2>Metodologia</h2>
+    <h3 id="p-regra">Regra</h3>
+    <p>Forma prospectiva, com a expectativa de inflação 12 meses à frente no lugar da inflação corrente:</p>
+    <div class="eqrow" data-eq="i^{T}_{t} = r^{*} + \pi^{e}_{t} + \alpha_{\pi}\,(\pi^{e}_{t} - \pi^{*}_{t}) + \alpha_{y}\,h_{t}"></div>
+    <p>Em que π<sup>e</sup> é a mediana suavizada do Focus para o IPCA dos próximos 12 meses, π<sup>*</sup> é a meta comparável ao mesmo horizonte e h é o hiato do produto em % do potencial.</p>
+    <h3 id="p-pesos">Pesos</h3>
+    <p>O padrão é 0,5 e 0,5, como em Taylor (1993). Um peso maior para a inflação aproxima a regra de um banco central mais reativo a desvios da meta.</p>
+    <h3 id="p-meta">Meta comparável</h3>
+    <p>Os 12 meses à frente atravessam dois anos-calendário, e a meta comparável pondera as metas dos dois anos pela fração de meses em cada um:</p>
+    <div class="eqrow" data-eq="\pi^{*}_{t} = \tfrac{12-m_t}{12}\,\pi^{*}_{a(t)} + \tfrac{m_t}{12}\,\pi^{*}_{a(t)+1}"></div>
+    <h3 id="p-neutro">Juro neutro</h3>
+    <p><b>BCB hoje</b>: valor usado nas projeções do cenário de referência no relatório mais recente, <span id="rpmNeutro"></span>, aplicado a toda a série. <b>BCB na época</b>: o valor que o Banco Central usava em cada momento, coletado de cada Relatório de Inflação e Relatório de Política Monetária desde dezembro de 2020, quando passou a ser divulgado (3,0% até 2021, depois 3,5%, 4,0%, 4,5%, 4,75% e 5,0%). <b>Mercado</b>: juro real de longo prazo implícito no Focus, a partir da Selic e do IPCA esperados para o terceiro ano à frente, quando a economia já teria convergido. O controle deslizante permite testar qualquer valor fixo.</p>
+    <div class="eqrow" data-eq="r^{*,\mathrm{Focus}}_{t} = \frac{1 + i^{e}_{t,\,a+3}}{1 + \pi^{e}_{t,\,a+3}} - 1"></div>
+    <h3 id="p-hiato">Hiato do produto</h3>
+    <p><b>Filtro HP</b>: desvio do log do PIB trimestral dessazonalizado em relação à tendência do filtro Hodrick-Prescott (λ = 1.600). Usa os dados de PIB de hoje, já revisados pelo IBGE, e o fim da série muda quando chegam dados novos. Meses posteriores ao último PIB divulgado repetem o último trimestre. <b>Estimativa do BCB</b>: a estimativa do hiato para o trimestre mais recente publicada em cada relatório trimestral do Banco Central desde março de 2021, que combina várias metodologias com o julgamento do Copom. É o que o Copom estimava na época de cada decisão, sem revisões posteriores. Antes de 2021 não há valor publicado no texto dos relatórios, e a regra fica sem dado nessa opção.</p>
+    <h3 id="p-tempo">Disponibilidade dos relatórios</h3>
+    <p>Cada relatório só é considerado disponível a partir do primeiro dia do mês seguinte ao de referência, para não usar informação que o mercado ainda não tinha. Os valores e o trecho de origem de cada um estão nos arquivos <code>dados/bcb_hiato_relatorios.csv</code> e <code>dados/bcb_neutro_relatorios.csv</code> do repositório.</p>
+    <h3 id="p-real">Juro real ex-ante</h3>
+    <p>Mesma definição do RPM: Selic composta esperada para os 12 meses seguintes, montada com a mediana do Focus para cada reunião do Copom, descontada do IPCA esperado para o mesmo período.</p>
+    <div class="eqrow" data-eq="r^{\,ex\text{-}ante}_{t} = \frac{1 + \bar{i}^{\,e}_{t,\,t+12}}{1 + \pi^{e}_{t,\,t+12}} - 1"></div>
+    <p>A composição usa os 252 dias úteis seguintes. As datas das reuniões passadas são inferidas do próprio Focus, e as futuras seguem o calendário oficial do Copom.</p>
+    <h3>Dados</h3>
+    <p>Banco Central do Brasil. SGS: Selic meta (432), meta de inflação (13521) e PIB trimestral dessazonalizado (22109). Focus, via API Olinda: IPCA 12 meses à frente, Selic por reunião do Copom e expectativas anuais de Selic e IPCA. Relatórios de Inflação (até 2024) e de Política Monetária (desde 2025) para o hiato e o juro neutro do BCB. Cada mês usa a última pesquisa Focus disponível no mês.</p>
+  </div>
+  <div>
+    <h2>Referências</h2>
+    <p class="refb">Taylor, J. B. (1993). Discretion versus policy rules in practice. <i>Carnegie-Rochester Conference Series on Public Policy</i>, 39, 195–214.</p>
+    <p class="refb">Clarida, R., Galí, J. e Gertler, M. (2000). Monetary policy rules and macroeconomic stability: evidence and some theory. <i>Quarterly Journal of Economics</i>, 115(1), 147–180.</p>
+    <p class="refb">Newey, W. K. e West, K. D. (1987). A simple, positive semi-definite, heteroskedasticity and autocorrelation consistent covariance matrix. <i>Econometrica</i>, 55(3), 703–708.</p>
+    <p class="refb">Orphanides, A. (2001). Monetary policy rules based on real-time data. <i>American Economic Review</i>, 91(4), 964–985.</p>
+    <p class="refb">Banco Central do Brasil (2026). <i>Relatório de Política Monetária</i>, v. 2, n. 3, setembro. <a href="https://www.bcb.gov.br/content/ri/relatorioinflacao/202609/rpm202609p.pdf" target="_blank" rel="noopener">PDF</a>.</p>
+  </div>
+  <p class="fonte" id="rodape"></p>
+</section>
+</div>
+
+<script>
+const D = {"meses":["2006-01","2006-02","2006-03","2006-04","2006-05","2006-06","2006-07","2006-08","2006-09","2006-10","2006-11","2006-12","2007-01","2007-02","2007-03","2007-04","2007-05","2007-06","2007-07","2007-08","2007-09","2007-10","2007-11","2007-12","2008-01","2008-02","2008-03","2008-04","2008-05","2008-06","2008-07","2008-08","2008-09","2008-10","2008-11","2008-12","2009-01","2009-02","2009-03","2009-04","2009-05","2009-06","2009-07","2009-08","2009-09","2009-10","2009-11","2009-12","2010-01","2010-02","2010-03","2010-04","2010-05","2010-06","2010-07","2010-08","2010-09","2010-10","2010-11","2010-12","2011-01","2011-02","2011-03","2011-04","2011-05","2011-06","2011-07","2011-08","2011-09","2011-10","2011-11","2011-12","2012-01","2012-02","2012-03","2012-04","2012-05","2012-06","2012-07","2012-08","2012-09","2012-10","2012-11","2012-12","2013-01","2013-02","2013-03","2013-04","2013-05","2013-06","2013-07","2013-08","2013-09","2013-10","2013-11","2013-12","2014-01","2014-02","2014-03","2014-04","2014-05","2014-06","2014-07","2014-08","2014-09","2014-10","2014-11","2014-12","2015-01","2015-02","2015-03","2015-04","2015-05","2015-06","2015-07","2015-08","2015-09","2015-10","2015-11","2015-12","2016-01","2016-02","2016-03","2016-04","2016-05","2016-06","2016-07","2016-08","2016-09","2016-10","2016-11","2016-12","2017-01","2017-02","2017-03","2017-04","2017-05","2017-06","2017-07","2017-08","2017-09","2017-10","2017-11","2017-12","2018-01","2018-02","2018-03","2018-04","2018-05","2018-06","2018-07","2018-08","2018-09","2018-10","2018-11","2018-12","2019-01","2019-02","2019-03","2019-04","2019-05","2019-06","2019-07","2019-08","2019-09","2019-10","2019-11","2019-12","2020-01","2020-02","2020-03","2020-04","2020-05","2020-06","2020-07","2020-08","2020-09","2020-10","2020-11","2020-12","2021-01","2021-02","2021-03","2021-04","2021-05","2021-06","2021-07","2021-08","2021-09","2021-10","2021-11","2021-12","2022-01","2022-02","2022-03","2022-04","2022-05","2022-06","2022-07","2022-08","2022-09","2022-10","2022-11","2022-12","2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08","2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05","2026-06","2026-07","2026-08","2026-09","2026-10"],"data_focus":["2006-01-31","2006-02-24","2006-03-31","2006-04-28","2006-05-31","2006-06-30","2006-07-31","2006-08-31","2006-09-29","2006-10-31","2006-11-30","2006-12-29","2007-01-31","2007-02-28","2007-03-30","2007-04-30","2007-05-31","2007-06-29","2007-07-31","2007-08-31","2007-09-28","2007-10-31","2007-11-30","2007-12-31","2008-01-31","2008-02-29","2008-03-31","2008-04-30","2008-05-30","2008-06-30","2008-07-31","2008-08-29","2008-09-30","2008-10-31","2008-11-28","2008-12-31","2009-01-30","2009-02-27","2009-03-31","2009-04-30","2009-05-29","2009-06-30","2009-07-31","2009-08-31","2009-09-30","2009-10-30","2009-11-30","2009-12-31","2010-01-29","2010-02-26","2010-03-31","2010-04-30","2010-05-31","2010-06-30","2010-07-30","2010-08-31","2010-09-30","2010-10-29","2010-11-30","2010-12-31","2011-01-31","2011-02-28","2011-03-31","2011-04-29","2011-05-31","2011-06-30","2011-07-29","2011-08-31","2011-09-30","2011-10-31","2011-11-30","2011-12-30","2012-01-31","2012-02-29","2012-03-30","2012-04-30","2012-05-31","2012-06-29","2012-07-31","2012-08-31","2012-09-28","2012-10-31","2012-11-30","2012-12-31","2013-01-31","2013-02-28","2013-03-28","2013-04-30","2013-05-31","2013-06-28","2013-07-31","2013-08-30","2013-09-30","2013-10-31","2013-11-29","2013-12-31","2014-01-31","2014-02-28","2014-03-31","2014-04-30","2014-05-30","2014-06-30","2014-07-31","2014-08-29","2014-09-30","2014-10-31","2014-11-28","2014-12-31","2015-01-30","2015-02-27","2015-03-31","2015-04-30","2015-05-29","2015-06-30","2015-07-31","2015-08-31","2015-09-30","2015-10-30","2015-11-30","2015-12-31","2016-01-29","2016-02-29","2016-03-31","2016-04-29","2016-05-31","2016-06-30","2016-07-29","2016-08-31","2016-09-30","2016-10-31","2016-11-30","2016-12-30","2017-01-31","2017-02-24","2017-03-31","2017-04-28","2017-05-31","2017-06-30","2017-07-31","2017-08-31","2017-09-29","2017-10-31","2017-11-30","2017-12-29","2018-01-31","2018-02-28","2018-03-29","2018-04-30","2018-05-30","2018-06-29","2018-07-31","2018-08-31","2018-09-28","2018-10-31","2018-11-30","2018-12-31","2019-01-31","2019-02-28","2019-03-29","2019-04-30","2019-05-31","2019-06-28","2019-07-31","2019-08-30","2019-09-30","2019-10-31","2019-11-29","2019-12-31","2020-01-31","2020-02-28","2020-03-31","2020-04-30","2020-05-29","2020-06-30","2020-07-31","2020-08-31","2020-09-30","2020-10-30","2020-11-30","2020-12-31","2021-01-29","2021-02-26","2021-03-31","2021-04-30","2021-05-31","2021-06-30","2021-07-30","2021-08-31","2021-09-30","2021-10-29","2021-11-30","2021-12-31","2022-01-31","2022-02-25","2022-03-31","2022-04-29","2022-05-31","2022-06-30","2022-07-29","2022-08-31","2022-09-30","2022-10-31","2022-11-30","2022-12-30","2023-01-31","2023-02-28","2023-03-31","2023-04-28","2023-05-31","2023-06-30","2023-07-31","2023-08-31","2023-09-29","2023-10-31","2023-11-30","2023-12-29","2024-01-31","2024-02-29","2024-03-28","2024-04-30","2024-05-31","2024-06-28","2024-07-31","2024-08-30","2024-09-30","2024-10-31","2024-11-29","2024-12-31","2025-01-31","2025-02-28","2025-03-31","2025-04-30","2025-05-30","2025-06-30","2025-07-31","2025-08-29","2025-09-30","2025-10-31","2025-11-28","2025-12-31","2026-01-30","2026-02-27","2026-03-31","2026-04-30","2026-05-29","2026-06-30","2026-07-31","2026-08-31","2026-09-30","2026-10-23"],"selic":[17.25,17.25,16.5,15.75,15.75,15.25,14.75,14.25,14.25,13.75,13.25,13.25,13.0,13.0,12.75,12.5,12.5,12.0,11.5,11.5,11.25,11.25,11.25,11.25,11.25,11.25,11.25,11.75,11.75,12.25,13.0,13.0,13.75,13.75,13.75,13.75,12.75,12.75,11.25,10.25,10.25,9.25,8.75,8.75,8.75,8.75,8.75,8.75,8.75,8.75,8.75,9.5,9.5,10.25,10.75,10.75,10.75,10.75,10.75,10.75,11.25,11.25,11.75,12.0,12.0,12.25,12.5,12.5,12.0,11.5,11.5,11.0,10.5,10.5,9.75,9.0,8.5,8.5,8.0,7.5,7.5,7.25,7.25,7.25,7.25,7.25,7.25,7.5,8.0,8.0,8.5,9.0,9.0,9.5,10.0,10.0,10.5,10.75,10.75,11.0,11.0,11.0,11.0,11.0,11.0,11.25,11.25,11.75,12.25,12.25,12.75,13.25,13.25,13.75,14.25,14.25,14.25,14.25,14.25,14.25,14.25,14.25,14.25,14.25,14.25,14.25,14.25,14.25,14.25,14.0,14.0,13.75,13.0,12.25,12.25,11.25,11.25,10.25,9.25,9.25,8.25,7.5,7.5,7.0,7.0,6.75,6.5,6.5,6.5,6.5,6.5,6.5,6.5,6.5,6.5,6.5,6.5,6.5,6.5,6.5,6.5,6.5,6.5,6.0,5.5,5.0,5.0,4.5,4.5,4.25,3.75,3.75,3.0,2.25,2.25,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.75,2.75,3.5,4.25,4.25,5.25,6.25,7.75,7.75,9.25,9.25,10.75,11.75,11.75,12.75,13.25,13.25,13.75,13.75,13.75,13.75,13.75,13.75,13.75,13.75,13.75,13.75,13.75,13.75,13.25,12.75,12.75,12.25,11.75,11.75,11.25,10.75,10.75,10.5,10.5,10.5,10.5,10.75,10.75,11.25,12.25,13.25,13.25,14.25,14.25,14.75,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,14.75,14.5,14.5,14.25,14.25,14.0,13.75,13.75],"ipca_e12":[4.57,4.43,4.25,4.13,4.21,4.34,4.43,4.53,4.1,4.06,4.18,4.06,4.0,3.79,3.7,3.5,3.4,3.52,3.65,3.74,3.84,3.83,3.96,4.28,4.3,4.26,4.35,4.41,4.79,5.29,5.37,5.26,5.16,5.32,5.44,4.96,4.69,4.58,4.21,4.14,4.02,4.09,4.08,4.07,4.25,4.29,4.4,4.44,4.51,4.49,4.62,4.72,4.76,4.85,4.97,5.02,5.14,5.16,5.36,5.35,5.51,5.35,5.34,5.34,5.04,5.18,5.4,5.45,5.71,5.62,5.54,5.33,5.31,5.3,5.4,5.54,5.5,5.5,5.56,5.65,5.52,5.37,5.39,5.52,5.47,5.62,5.43,5.58,5.67,5.65,5.89,6.12,6.22,6.19,6.09,6.01,6.0,6.12,6.1,5.95,6.01,5.9,6.03,6.24,6.33,6.38,6.57,6.61,6.61,6.54,6.17,5.96,5.99,5.92,5.67,5.65,6.05,6.47,7.03,6.94,6.82,6.77,6.47,6.19,5.94,5.89,5.55,5.28,5.15,4.95,4.89,4.8,4.75,4.55,4.57,4.64,4.56,4.46,4.53,4.2,3.97,4.01,3.96,3.9,4.04,4.02,3.95,4.11,4.37,4.02,3.67,3.75,4.01,3.91,3.73,3.9,4.03,4.04,3.89,3.6,3.58,3.68,3.67,3.53,3.48,3.6,3.67,3.73,3.44,3.56,3.32,2.84,3.1,3.2,2.97,3.03,3.23,3.52,3.84,3.56,3.6,3.84,3.991,4.038,4.132,4.203,4.472,4.516,4.681,5.124,5.401,5.075,5.282,5.219,5.585,5.506,5.984,5.557,5.524,5.637,5.091,5.108,5.235,5.3,5.664,5.604,5.261,5.232,4.663,4.176,4.123,4.135,4.021,3.928,3.932,3.875,3.813,3.611,3.461,3.564,3.638,3.61,3.709,3.867,3.948,4.008,4.408,4.95,5.737,5.494,5.118,4.981,4.805,4.673,4.421,4.377,4.24,4.06,4.096,4.015,3.99,3.923,4.091,4.05,4.058,4.125,4.188,4.553,4.599,4.534],"meta_12m":[4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.479,4.458,4.438,4.417,4.396,4.375,4.354,4.333,4.312,4.292,4.271,4.25,4.229,4.208,4.188,4.167,4.146,4.125,4.104,4.083,4.062,4.042,4.021,4.0,3.979,3.958,3.938,3.917,3.896,3.875,3.854,3.833,3.812,3.792,3.771,3.75,3.729,3.708,3.688,3.667,3.646,3.625,3.604,3.583,3.562,3.542,3.521,3.5,3.479,3.458,3.438,3.417,3.396,3.375,3.354,3.333,3.312,3.292,3.271,3.25,3.229,3.208,3.188,3.167,3.146,3.125,3.104,3.083,3.062,3.042,3.021,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0],"hiato_hp":[-0.345,-0.345,-0.345,-1.12,-1.12,-1.12,-0.543,-0.543,-0.543,-0.479,-0.479,-0.479,0.277,0.277,0.277,0.836,0.836,0.836,0.775,0.775,0.775,1.182,1.182,1.182,1.357,1.357,1.357,2.274,2.274,2.274,2.842,2.842,2.842,-2.052,-2.052,-2.052,-4.541,-4.541,-4.541,-3.746,-3.746,-3.746,-2.45,-2.45,-2.45,-0.911,-0.911,-0.911,0.147,0.147,0.147,0.465,0.465,0.465,0.422,0.422,0.422,0.961,0.961,0.961,1.459,1.459,1.459,1.685,1.685,1.685,0.736,0.736,0.736,0.974,0.974,0.974,-1.067,-1.067,-1.067,0.179,0.179,0.179,1.414,1.414,1.414,1.039,1.039,1.039,1.243,1.243,1.243,2.351,2.351,2.351,2.64,2.64,2.64,2.685,2.685,2.685,3.481,3.481,3.481,2.017,2.017,2.017,2.033,2.033,2.033,2.691,2.691,2.691,2.068,2.068,2.068,-0.114,-0.114,-0.114,-1.548,-1.548,-1.548,-2.087,-2.087,-2.087,-3.306,-3.306,-3.306,-2.817,-2.817,-2.817,-3.169,-3.169,-3.169,-3.113,-3.113,-3.113,-1.95,-1.95,-1.95,-1.016,-1.016,-1.016,-0.717,-0.717,-0.717,-0.141,-0.141,-0.141,0.472,0.472,0.472,0.33,0.33,0.33,1.217,1.217,1.217,0.875,0.875,0.875,1.044,1.044,1.044,1.459,1.459,1.459,1.279,1.279,1.279,1.917,1.917,1.917,-0.68,-0.68,-0.68,-10.303,-10.303,-10.303,-3.063,-3.063,-3.063,0.275,0.275,0.275,0.667,0.667,0.667,-0.555,-0.555,-0.555,-0.964,-0.964,-0.964,-0.24,-0.24,-0.24,-0.178,-0.178,-0.178,0.304,0.304,0.304,0.672,0.672,0.672,0.402,0.402,0.402,1.012,1.012,1.012,1.079,1.079,1.079,0.483,0.483,0.483,0.119,0.119,0.119,0.035,0.035,0.035,0.989,0.989,0.989,1.139,1.139,1.139,0.477,0.477,0.477,0.989,0.989,0.989,0.607,0.607,0.607,-0.02,-0.02,-0.02,-0.502,-0.502,-0.502,-0.17,-0.17,-0.17,-0.422,-0.422,-0.422,-0.422,-0.422,-0.422,-0.422],"hiato_bcb":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,-3.2,-3.2,-3.2,-2.5,-2.5,-2.5,-1.7,-1.7,-1.7,-1.8,-1.8,-1.8,-1.8,-1.8,-1.8,-1.3,-1.3,-1.3,-1.2,-1.2,-1.2,-1.1,-1.1,-1.1,-1.3,-1.3,-1.3,-1.2,-1.2,-1.2,-0.7,-0.7,-0.7,-0.6,-0.6,-0.6,-0.6,-0.6,-0.6,0.0,0.0,0.0,0.5,0.5,0.5,0.7,0.7,0.7,0.6,0.6,0.6,0.5,0.5,0.5,0.5,0.5,0.5,0.2,0.2,0.2,0.1,0.1,0.1,0.4,0.4,0.4,0.4],"hiato_bcb_trim":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"2021Q1","2021Q1","2021Q1","2021Q2","2021Q2","2021Q2","2021Q3","2021Q3","2021Q3","2021Q4","2021Q4","2021Q4","2022Q1","2022Q1","2022Q1","2022Q2","2022Q2","2022Q2","2022Q3","2022Q3","2022Q3","2022Q4","2022Q4","2022Q4","2023Q1","2023Q1","2023Q1","2023Q2","2023Q2","2023Q2","2023Q3","2023Q3","2023Q3","2023Q4","2023Q4","2023Q4","2024Q1","2024Q1","2024Q1","2024Q2","2024Q2","2024Q2","2024Q3","2024Q3","2024Q3","2024Q3","2024Q3","2024Q3","2025Q1","2025Q1","2025Q1","2025Q2","2025Q2","2025Q2","2025Q3","2025Q3","2025Q3","2025Q4","2025Q4","2025Q4","2026Q1","2026Q1","2026Q1","2026Q2","2026Q2","2026Q2","2026Q3"],"neutro_bcb":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.5,3.5,3.5,3.5,3.5,3.5,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.0,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.75,4.75,4.75,4.75,4.75,4.75,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0],"bcb_relatorio":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"RI 2020-12","RI 2020-12","RI 2020-12","RI 2021-03","RI 2021-03","RI 2021-03","RI 2021-06","RI 2021-06","RI 2021-06","RI 2021-09","RI 2021-09","RI 2021-09","RI 2021-12","RI 2021-12","RI 2021-12","RI 2022-03","RI 2022-03","RI 2022-03","RI 2022-06","RI 2022-06","RI 2022-06","RI 2022-09","RI 2022-09","RI 2022-09","RI 2022-12","RI 2022-12","RI 2022-12","RI 2023-03","RI 2023-03","RI 2023-03","RI 2023-06","RI 2023-06","RI 2023-06","RI 2023-09","RI 2023-09","RI 2023-09","RI 2023-12","RI 2023-12","RI 2023-12","RI 2024-03","RI 2024-03","RI 2024-03","RI 2024-06","RI 2024-06","RI 2024-06","RI 2024-09","RI 2024-09","RI 2024-09","RI 2024-12","RI 2024-12","RI 2024-12","RPM 2025-03","RPM 2025-03","RPM 2025-03","RPM 2025-06","RPM 2025-06","RPM 2025-06","RPM 2025-09","RPM 2025-09","RPM 2025-09","RPM 2025-12","RPM 2025-12","RPM 2025-12","RPM 2026-03","RPM 2026-03","RPM 2026-03","RPM 2026-06","RPM 2026-06","RPM 2026-06","RPM 2026-09"],"juro_real":[10.573,10.406,9.978,9.943,9.807,9.586,9.257,8.985,8.826,8.518,8.076,7.985,7.875,7.898,7.856,7.836,7.354,6.995,6.739,6.82,6.8,6.901,6.705,6.646,6.663,6.704,7.268,7.971,8.162,8.092,8.428,8.87,8.973,8.144,7.871,7.154,6.294,5.859,5.105,4.988,4.88,4.507,4.487,4.497,4.328,4.462,4.584,5.029,5.235,5.478,5.605,6.088,6.445,6.673,6.276,5.845,5.676,5.752,5.967,6.296,6.389,6.645,6.533,6.627,7.062,6.946,6.952,6.686,4.782,4.768,4.353,4.22,4.135,4.064,3.461,3.237,2.446,2.046,1.877,1.624,1.876,1.791,1.765,1.639,1.688,1.586,2.497,2.38,2.531,3.212,3.089,3.133,3.271,3.737,3.89,4.187,4.66,4.629,4.869,5.071,4.978,5.087,4.983,4.778,4.618,5.031,5.127,5.455,5.503,5.982,6.687,6.916,7.363,7.945,8.01,7.857,7.603,7.244,6.746,7.793,6.956,6.959,7.1,6.835,6.807,6.862,7.172,7.332,7.162,6.956,6.912,6.675,5.712,5.598,4.777,4.399,4.241,4.044,3.209,2.987,3.057,2.751,2.738,2.77,2.61,2.631,2.272,2.067,2.041,2.412,2.799,2.79,2.624,2.762,2.781,2.543,2.374,2.372,2.512,2.799,2.819,2.029,1.894,1.527,1.319,0.924,0.621,0.561,0.786,0.666,0.012,0.008,-0.787,-1.137,-0.939,-1.0,-1.192,-1.45,-1.648,-1.308,-0.858,-0.578,0.414,0.822,1.194,1.731,2.054,2.674,3.458,4.575,5.379,6.012,6.143,6.525,6.85,7.197,6.814,7.654,7.772,7.618,8.114,7.964,7.804,7.831,7.417,7.469,7.669,7.393,7.773,7.664,7.421,6.834,6.644,6.48,6.264,6.027,5.792,5.817,5.89,6.005,6.308,6.622,6.527,6.386,7.512,7.559,7.998,8.989,8.462,8.784,9.262,9.398,9.36,9.676,9.831,9.684,9.66,9.652,9.399,9.291,9.121,8.876,8.892,9.089,9.073,9.348,9.081,8.575,8.25,7.821],"selic_e12":[15.627,15.297,14.652,14.484,14.43,14.342,14.097,13.922,13.288,12.923,12.594,12.369,12.19,11.987,11.847,11.611,11.004,10.761,10.635,10.815,10.901,10.996,10.93,11.21,11.25,11.25,11.934,12.732,13.343,13.81,14.25,14.596,14.596,13.897,13.739,12.469,11.279,10.707,9.53,9.334,9.096,8.782,8.75,8.75,8.762,8.944,9.185,9.693,9.981,10.214,10.484,11.096,11.512,11.847,11.558,11.159,11.108,11.209,11.647,11.983,12.251,12.351,12.222,12.321,12.458,12.486,12.727,12.5,10.765,10.656,10.134,9.775,9.664,9.579,9.047,8.956,8.08,7.658,7.542,7.366,7.5,7.257,7.25,7.25,7.25,7.296,8.062,8.093,8.345,9.043,9.161,9.444,9.694,10.159,10.217,10.448,10.939,11.033,11.266,11.322,11.287,11.287,11.314,11.316,11.24,11.732,12.034,12.425,12.477,12.914,13.269,13.288,13.794,14.335,14.134,13.951,14.113,14.182,14.25,15.274,14.25,14.2,14.029,13.448,13.151,13.157,13.12,12.999,12.681,12.25,12.14,11.795,10.734,10.403,9.566,9.243,8.994,8.684,7.884,7.312,7.148,6.872,6.806,6.778,6.755,6.757,6.311,6.262,6.5,6.529,6.571,6.645,6.739,6.78,6.615,6.542,6.5,6.508,6.5,6.5,6.5,5.784,5.634,5.111,4.845,4.557,4.313,4.311,4.253,4.25,3.332,2.848,2.289,2.027,2.003,2.0,2.0,2.019,2.129,2.205,2.712,3.24,4.421,4.893,5.375,6.007,6.618,7.311,8.301,9.933,11.071,11.391,11.749,12.085,12.818,13.1,13.206,13.637,13.725,13.684,13.619,13.479,13.447,13.547,13.501,13.491,13.333,13.012,12.799,12.161,11.85,11.252,10.933,10.663,10.443,10.135,9.825,9.638,9.554,9.782,10.175,10.471,10.478,10.5,11.756,11.871,12.759,14.385,14.685,14.761,14.855,14.847,14.615,14.801,14.687,14.485,14.309,14.103,13.88,13.679,13.475,13.148,13.347,13.507,13.5,13.858,13.649,13.518,13.229,12.709],"neutro_focus":[7.312,7.331,7.383,7.028,7.383,7.177,7.177,6.897,6.424,6.286,6.046,5.668,5.769,5.288,5.769,4.808,4.808,4.567,4.808,4.808,4.808,4.808,4.808,5.288,4.808,4.808,5.197,5.448,5.465,6.22,6.22,6.22,6.22,6.22,6.22,5.981,5.263,5.254,4.785,4.785,4.785,4.785,4.785,4.785,5.263,5.263,5.502,5.742,5.263,5.263,5.263,5.263,5.263,5.263,5.263,5.263,5.263,5.263,5.263,5.263,5.263,5.263,5.263,5.263,5.388,5.502,5.742,5.502,5.263,5.263,5.213,5.122,4.785,4.685,3.81,3.81,3.81,3.81,3.81,3.81,3.571,3.571,3.81,3.457,3.095,3.333,3.333,3.408,3.355,3.612,3.416,3.653,3.939,4.265,4.265,4.739,4.265,4.463,4.463,4.839,4.739,4.739,4.265,4.265,4.265,4.265,4.739,4.739,4.762,4.762,4.762,4.762,5.062,5.263,5.263,5.263,5.233,4.852,5.238,5.714,5.714,5.714,5.714,5.238,5.263,5.263,5.263,5.263,5.263,5.263,4.909,4.785,4.306,4.306,4.077,4.077,4.077,4.087,3.846,3.846,3.846,3.846,3.846,3.846,3.846,3.846,3.846,3.846,3.846,3.846,3.896,3.926,3.876,3.856,4.066,4.096,4.096,4.096,4.096,4.096,3.614,3.614,3.382,3.382,3.382,2.899,2.899,2.899,2.899,2.899,2.415,2.415,2.415,2.415,2.663,2.547,2.179,2.663,2.663,2.663,2.663,2.663,3.027,3.148,3.148,3.148,3.398,3.363,3.398,3.57,3.904,3.883,3.883,3.883,3.883,3.883,4.369,4.369,4.369,4.369,4.612,4.612,4.854,4.6,4.831,4.578,4.567,4.688,4.808,4.952,4.831,4.831,4.831,4.831,4.831,4.831,4.831,4.831,4.831,4.831,5.314,5.314,5.314,5.314,5.314,5.556,5.797,5.897,6.034,6.024,5.993,5.973,5.922,5.953,5.973,5.973,6.075,6.28,5.797,6.159,5.797,5.797,6.039,6.28,6.28,6.28,6.28,6.28,6.28,6.28],"r_bcb":5.0,"rel_neutro":"RPM 2026-09","resumo":[{"especificacao":"A","descricao":"Neutro do Focus, hiato HP","periodo":"Amostra completa","inicio":"2006-01","fim":"2026-10","meses":250,"desvio_medio_pp":0.759,"ep_hac":0.353,"t":2.149,"frac_meses_acima":0.564},{"especificacao":"B","descricao":"Neutro e hiato do BCB em tempo real","periodo":"Amostra completa","inicio":"2021-04","fim":"2026-10","meses":67,"desvio_medio_pp":2.881,"ep_hac":0.481,"t":5.993,"frac_meses_acima":0.881},{"especificacao":"C","descricao":"Neutro fixo de 5%, hiato HP","periodo":"Amostra completa","inicio":"2006-01","fim":"2026-10","meses":250,"desvio_medio_pp":0.49,"ep_hac":0.465,"t":1.055,"frac_meses_acima":0.58}],"gerado":"2026-10-30"};
+const $ = id => document.getElementById(id);
+const fmt = (v, d = 2) => v == null || isNaN(v) ? "—" : v.toLocaleString("pt-BR", {minimumFractionDigits: d, maximumFractionDigits: d});
+const pct = (v, d = 2) => fmt(v, d) + "%";
+const MESES = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
+const rot = s => { const [a, m] = s.split("-"); return MESES[+m - 1] + "/" + a; };
+
+const S = {neutro: "bcb", neutroVal: D.r_bcb, hiato: "hp", api: 0.5, ay: 0.5, ini: 0, fim: D.meses.length - 1};
+
+function neutroDe(i, o = S) {
+  return o.neutro === "focus" ? D.neutro_focus[i] : o.neutro === "bcb" ? D.r_bcb : o.neutro === "bcbtr" ? D.neutro_bcb[i] : o.neutroVal;
+}
+function hiatoDe(i, o = S) { return o.hiato === "bcb" ? D.hiato_bcb[i] : D.hiato_hp[i]; }
+function regra(i, o = S) {
+  const r = neutroDe(i, o), h = hiatoDe(i, o), pe = D.ipca_e12[i];
+  if (r == null || h == null) return NaN;
+  return r + pe + o.api * (pe - D.meta_12m[i]) + o.ay * h;
+}
+function neutroEsc(i) { const v = neutroDe(i); return v == null ? NaN : v; }
+
+function seg(id, opts, key, cb) {
+  const el = $(id); el.innerHTML = "";
+  opts.forEach(([v, lab]) => {
+    const b = document.createElement("button"); b.type = "button"; b.textContent = lab;
+    b.setAttribute("aria-pressed", String(S[key] === v));
+    b.onclick = () => { S[key] = v; [...el.children].forEach(c => c.setAttribute("aria-pressed", "false")); b.setAttribute("aria-pressed", "true"); cb && cb(); render(); };
+    el.appendChild(b);
+  });
+}
+
+function leitura() {
+  const n = D.meses.length - 1;
+  $("refmes").textContent = "Leitura de " + rot(D.meses[n]);
+  const card = (k, a, b, la, lb) => {
+    const d = a - b;
+    $("v" + k).textContent = isNaN(d) ? "—" : (d > 0 ? "+" : "") + fmt(d) + " pp";
+    $("d" + k).textContent = `${la} ${pct(a)} · ${lb} ${pct(b)}`;
+    $("c" + k).classList.toggle("fo", d < 0);
+  };
+  card(1, D.selic[n], regra(n), "Selic", "Regra");
+  card(2, D.juro_real[n], neutroEsc(n), "Juro real", "Neutro");
+}
+
+const AJUDA = {
+  neutro: {bcb: () => `Valor que o BCB usa hoje nas projeções (${pct(D.r_bcb)}), aplicado a todo o período.`,
+           bcbtr: () => "Valor que o BCB usava nas projeções em cada data. Divulgado desde dez/2020.",
+           focus: () => "Juro real de longo prazo implícito nas expectativas do Focus para daqui a três anos.",
+           fixo: () => "Valor fixo escolhido no controle abaixo."},
+  hiato: {hp: () => "Calculado com o PIB trimestral pelo filtro Hodrick-Prescott.",
+          bcb: () => "Estimativa publicada pelo BCB em cada relatório trimestral, na época da decisão. Desde mar/2021."},
+};
+
+function chart(svgId, hudId, series, area, fmtHud) {
+  const svg = $(svgId), W = Math.max(320, svg.parentNode.clientWidth), H = Math.round(Math.min(380, Math.max(240, W * 0.42)));
+  const m = {l: 36, r: 64, t: 12, b: 28};
+  const i0 = S.ini, i1 = Math.max(S.fim, S.ini + 1), idx = D.meses.map((_, i) => i).filter(i => i >= i0 && i <= i1);
+  let vals = []; series.forEach(s => idx.forEach(i => { const v = s.f(i); if (v != null && !isNaN(v)) vals.push(v); }));
+  let lo = Math.floor(Math.min(...vals) - 0.5), hi = Math.ceil(Math.max(...vals) + 0.5);
+  const step = (hi - lo) > 14 ? 4 : (hi - lo) > 7 ? 2 : 1;
+  lo = Math.floor(lo / step) * step; hi = Math.ceil(hi / step) * step;
+  const x = i => m.l + (i - i0) / Math.max(1, i1 - i0) * (W - m.l - m.r);
+  const y = v => m.t + (hi - v) / (hi - lo) * (H - m.t - m.b);
+  const ns = "http://www.w3.org/2000/svg";
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`); svg.innerHTML = "";
+  const add = (tag, at, txt) => { const e = document.createElementNS(ns, tag); for (const k in at) e.setAttribute(k, at[k]); if (txt != null) e.textContent = txt; svg.appendChild(e); return e; };
+  for (let v = lo; v <= hi + 1e-9; v += step) {
+    add("line", {x1: m.l, x2: W - m.r, y1: y(v), y2: y(v), class: "grade"});
+    add("text", {x: m.l - 6, y: y(v) + 4, "text-anchor": "end", class: "eixo"}, fmt(v, 0));
+  }
+  const anos = [...new Set(idx.map(i => +D.meses[i].slice(0, 4)))];
+  const passoAno = anos.length > 12 ? (W < 560 ? 5 : 2) : (W < 560 ? 2 : 1);
+  const curto = idx.length <= 36;
+  idx.forEach(i => { const [a, mm] = D.meses[i].split("-");
+    if (curto ? (mm === "01" || mm === "07") : (mm === "01" && (+a % passoAno === 0)))
+      add("text", {x: x(i), y: H - 8, "text-anchor": "middle", class: "eixo"}, curto ? rot(D.meses[i]) : a); });
+  if (area) {
+    // segmentos coloridos entre duas series
+    for (let k = 0; k < idx.length - 1; k++) {
+      const i = idx[k], j = idx[k + 1];
+      const a1 = area.a(i), b1 = area.b(i), a2 = area.a(j), b2 = area.b(j);
+      if ([a1, b1, a2, b2].some(v => v == null || isNaN(v))) continue;
+      const cor = (a1 + a2) / 2 >= (b1 + b2) / 2 ? "var(--aperto-t)" : "var(--folga-t)";
+      add("path", {d: `M${x(i)},${y(a1)}L${x(j)},${y(a2)}L${x(j)},${y(b2)}L${x(i)},${y(b1)}Z`, fill: cor, stroke: "none"});
+    }
+  }
+  series.forEach(s => {
+    let d = "", pen = false;
+    idx.forEach(i => { const v = s.f(i); if (v == null || isNaN(v)) { pen = false; return; } d += (pen ? "L" : "M") + x(i).toFixed(1) + "," + y(v).toFixed(1); pen = true; });
+    add("path", {d, fill: "none", stroke: s.cor, "stroke-width": s.w || 2, "stroke-dasharray": s.dash || "none", "stroke-linejoin": "round"});
+    const n = idx[idx.length - 1], v = s.f(n);
+    if (s.lab && v != null) { add("circle", {cx: x(n), cy: y(v), r: 3.2, fill: s.cor, stroke: "none"}); s._ly = y(v); s._lv = v; }
+  });
+  // rotulos finais sem sobreposicao
+  const labs = series.filter(s => s._ly != null).sort((a, b) => a._ly - b._ly);
+  for (let k = 1; k < labs.length; k++) if (labs[k]._ly - labs[k - 1]._ly < 14) labs[k]._ly = labs[k - 1]._ly + 14;
+  labs.forEach(s => add("text", {x: W - m.r + 7, y: s._ly + 4, class: "endlab", fill: s.cor}, fmt(s._lv, 2)));
+  // crosshair
+  const cross = add("line", {y1: m.t, y2: H - m.b, stroke: "var(--ink)", "stroke-width": 0.9, "stroke-dasharray": "2 3", opacity: 0});
+  const hud = $(hudId);
+  const show = i => { cross.setAttribute("x1", x(i)); cross.setAttribute("x2", x(i)); cross.setAttribute("opacity", 1); hud.innerHTML = fmtHud(i); };
+  const last = idx[idx.length - 1]; hud.innerHTML = fmtHud(last);
+  svg.onpointermove = e => { const r = svg.getBoundingClientRect(); const px = (e.clientX - r.left) / r.width * W;
+    const i = Math.round(i0 + (px - m.l) / (W - m.l - m.r) * (i1 - i0)); if (i >= i0 && i <= i1) show(i); };
+  svg.onpointerleave = () => { cross.setAttribute("opacity", 0); hud.innerHTML = fmtHud(last); };
+}
+
+function render() {
+  $("oNeutro").textContent = pct(S.neutroVal);
+  $("hNeutro").textContent = AJUDA.neutro[S.neutro](); $("hHiato").textContent = AJUDA.hiato[S.hiato]();
+  const ini = D.meses.findIndex((_, i) => !isNaN(regra(i)));
+  $("disp1").textContent = ini > 0 ? "Com as escolhas atuais, a regra só pode ser calculada a partir de " + rot(D.meses[ini]) + ", quando o BCB passou a publicar esses dados." : "";
+  leitura();
+  chart("g1", "hud1", [
+    {f: i => D.selic[i], cor: "var(--ink)", w: 2.2, lab: true},
+    {f: i => regra(i), cor: "var(--regra)", w: 2, lab: true},
+  ], {a: i => D.selic[i], b: i => regra(i)},
+  i => `<b>${rot(D.meses[i])}</b><span>Selic <b>${pct(D.selic[i])}</b></span><span>Regra <b style="color:var(--regra)">${pct(regra(i))}</b></span><span>Diferença <b>${fmt(D.selic[i]-regra(i))} pp</b></span><span>IPCA esperado <b>${pct(D.ipca_e12[i])}</b></span><span>Hiato <b>${pct(hiatoDe(i))}</b>${S.hiato==="bcb"&&D.hiato_bcb_trim[i]?` <small>(${D.hiato_bcb_trim[i].replace(/(\d{4})Q(\d)/,"$2º tri $1")})</small>`:""}</span><span>Neutro <b>${pct(neutroEsc(i))}</b></span>${(S.hiato==="bcb"||S.neutro==="bcbtr")&&D.bcb_relatorio[i]?`<span>Fonte <b>${D.bcb_relatorio[i]}</b></span>`:""}`);
+  chart("g2", "hud2", [
+    {f: i => D.juro_real[i], cor: "var(--ink)", w: 2.2, lab: true},
+    {f: i => neutroEsc(i), cor: "var(--regra)", w: 1.8, dash: "5 4", lab: true},
+    {f: i => D.neutro_focus[i], cor: "var(--muted)", w: 1.4, dash: "1.5 3", lab: S.neutro !== "focus"},
+  ], {a: i => D.juro_real[i], b: i => neutroEsc(i)},
+  i => `<b>${rot(D.meses[i])}</b><span>Juro real ex-ante <b>${pct(D.juro_real[i])}</b></span><span>Neutro <b style="color:var(--regra)">${pct(neutroEsc(i))}</b></span><span>Selic esperada 12m <b>${pct(D.selic_e12[i])}</b></span>`);
+}
+
+function init() {
+  seg("cNeutro", [["bcb", "BCB hoje: " + pct(D.r_bcb)], ["bcbtr", "BCB na época"], ["focus", "Mercado (Focus)"], ["fixo", "Personalizado"]], "neutro");
+  seg("cHiato", [["hp", "Filtro HP"], ["bcb", "Estimativa do BCB"]], "hiato");
+  seg("cApi", [[0.5, "0,5"], [1, "1,0"], [1.5, "1,5"]], "api");
+  seg("cAy", [[0.5, "0,5"], [1, "1,0"]], "ay");
+  const n = D.meses.length;
+  const pI = $("pIni"), pF = $("pFim");
+  [pI, pF].forEach(el => { el.max = n - 1; });
+  pI.value = 0; pF.value = n - 1;
+  const periodo = () => {
+    let a = +pI.value, b = +pF.value;
+    if (b - a < 6) { if (document.activeElement === pI) { a = b - 6; pI.value = a; } else { b = a + 6; pF.value = b; } }
+    S.ini = Math.max(0, a); S.fim = Math.min(n - 1, b);
+    $("pFil").style.left = (S.ini / (n - 1) * 100) + "%"; $("pFil").style.right = (100 - S.fim / (n - 1) * 100) + "%";
+    $("pIniL").textContent = rot(D.meses[S.ini]); $("pFimL").textContent = rot(D.meses[S.fim]);
+  };
+  pI.oninput = pF.oninput = () => { periodo(); render(); };
+  periodo();
+  $("rNeutro").oninput = e => { S.neutroVal = +e.target.value; S.neutro = "fixo";
+    [...$("cNeutro").children].forEach((c, k) => c.setAttribute("aria-pressed", String(k === 3))); render(); };
+  $("rpmNeutro").textContent = pct(D.r_bcb) + " (" + D.rel_neutro.replace(/(\d{4})-(\d{2})/, (_, a, m) => MESES[+m - 1] + "/" + a) + ")";
+  $("atualizado").textContent = "Atualizado em " + D.gerado.split("-").reverse().join("/");
+  $("rodape").textContent = "Fonte: Banco Central do Brasil (SGS, Focus e Relatório de Política Monetária). Cálculos do autor. Série mensal de " + rot(D.meses[0]) + " a " + rot(D.meses[n - 1]) + ".";
+  render();
+  let t; addEventListener("resize", () => { clearTimeout(t); t = setTimeout(render, 120); });
+  const eq = () => { if (!window.katex) return setTimeout(eq, 150);
+    document.querySelectorAll("[data-eq]").forEach(el => katex.render(el.dataset.eq, el, {displayMode: true, throwOnError: false, output: "mathml"})); };
+  eq();
+}
+init();
+</script>
+
+</body>
+</html>

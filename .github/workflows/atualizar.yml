@@ -1,0 +1,30 @@
+name: Atualizar dashboard
+
+on:
+  schedule:
+    - cron: "17 12 * * 1"   # toda segunda, 09:17 em Brasília (Focus sai às segundas)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Instalar dependências
+        run: pip install -r requirements.txt
+      - name: Rodar o pipeline
+        run: python build.py
+      - name: Commitar se houve mudança
+        run: |
+          git config user.name  "Davi Speck"
+          git config user.email "davispeckramos@gmail.com"
+          git add docs/
+          if git diff --staged --quiet; then echo "Sem mudança."; exit 0; fi
+          git commit -m "Atualiza dados da regra de Taylor ($(date +%Y-%m-%d))"
+          git push

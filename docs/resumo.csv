@@ -1,0 +1,4 @@
+especificacao,descricao,periodo,inicio,fim,meses,desvio_medio_pp,ep_hac,t,frac_meses_acima
+A,"Neutro do Focus, hiato HP",Amostra completa,2006-01,2026-10,250,0.759,0.3532,2.1488,0.564
+B,Neutro e hiato do BCB em tempo real,Amostra completa,2021-04,2026-10,67,2.8813,0.4808,5.9932,0.8806
+C,"Neutro fixo de 5%, hiato HP",Amostra completa,2006-01,2026-10,250,0.4904,0.4647,1.0554,0.58
